@@ -1,5 +1,7 @@
 
 /**
+ 
+/**
  * Sample Skeleton for 'Scene.fxml' Controller Class
  */
 
@@ -48,16 +50,34 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	
+    	this.txtResult.clear();
+    	Match m = this.cmbMatch.getValue();
+    	if (m==null) {
+    		this.txtResult.setText("Devi selezionare un match prima di creare il grafo\n");
+    		return;
+    	}
+    	
+    	this.model.creaGrafo(m);
+    	this.btnGiocatoreMigliore.setDisable(false);
+    	this.txtResult.setText("Grafo creato\n# vertici: "+this.model.getNumVertex()+"\n# archi: "
+    			+this.model.getNumEdge()+"\n");
     }
 
     @FXML
     void doGiocatoreMigliore(ActionEvent event) {    	
     	
+    	this.txtResult.setText("Giocatore migliore:\n");
+    	this.model.giocatoreMigliore();
+    	this.txtResult.appendText(this.model.getMigliore()+", delta efficienza = "+this.model.getEffMigliore());
     }
     
     @FXML
     void doSimula(ActionEvent event) {
 
+    	Integer N = Integer.parseInt(this.txtN.getText());
+    	Match m = this.cmbMatch.getValue();
+    	
+    	this.txtResult.setText(this.model.simulazione(N, m));
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -69,9 +89,13 @@ public class FXMLController {
         assert txtN != null : "fx:id=\"txtN\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
 
+        this.btnGiocatoreMigliore.setDisable(true);
     }
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	this.cmbMatch.getItems().clear();
+    	this.cmbMatch.getItems().addAll(this.model.getAllMatches());
     }
 }
